@@ -1,9 +1,9 @@
 package ru.netology.test;
 
-import com.codeborne.selenide.Configuration;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.*;
+import io.qameta.allure.selenide.AllureSelenide;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.Keys;
 import ru.netology.data.DataGenerator;
 
@@ -13,13 +13,28 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 
 public class TestAppCardDelivery {
+    @BeforeAll
+    static void setUpAll() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        SelenideLogger.removeListener("allure");
+    }
+
     @BeforeEach
+    @Step("Открываем страницу и удаляем плейсхолдер даты")
     void setUp() {
         open("http://localhost:9999/");
-        Configuration.holdBrowserOpen = true;
         $("[data-test-id='date'] input").doubleClick().sendKeys(Keys.DELETE);
     }
 
+    @Epic(value = "Форма заказа доставки карты")
+    @Feature(value = "Причина-следствие заказа карты и регистрация даты")
+    @Story(value = "Успешный план встречи для получения карты")
+    @Description(value = "Тестируется заполнение всех полей, чекбоксов, кнопки и" +
+            "получения подтверждения успешной даты встречи для выдачи карты.")
     @Test
     @DisplayName("Should successful plan meeting")
     void shouldSuccessfulPlanMeeting() {
@@ -35,6 +50,13 @@ public class TestAppCardDelivery {
                 + firstMeetingDate));
     }
 
+    @Epic(value = "Форма заказа доставки карты")
+    @Feature(value = "Причина-следствие заказа карты и регистрация даты")
+    @Story(value = "Успешный план встречи для получения карты. " +
+            "Перепланирование встречи на другую дату")
+    @Description(value = "Тестируется заполнение всех полей, чекбоксов, кнопки,  " +
+            "получения подтверждения успешной даты встречи для выдачи карты " +
+            "и перерегистрация на другую дату")
     @Test
     @DisplayName("Should successful plan and replan meeting")
     void shouldSuccessfulPlanAndReplanMeeting() {
